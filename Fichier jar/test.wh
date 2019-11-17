@@ -1,0 +1,13 @@
+function p:read X % Y:=nil; while nil do nop; nop od %  write Z	
+function p: read X % Y:=nil % write Z	
+function p: read X % Y := nil % write Z	
+function p: read X % Y := nil % write Z	
+function p: read X % Y := nil % write Z	
+function p: read X % Y := nil % write Z	
+function p: read X % Y := nil % write Z	
+function p: read X % Y := nil % write Z	
+function p: read X % Y := nil % write Z	
+function p: read X % Y := nil % write Z	
+function p: read X % Y:=nil % write Z	
+function p: read X % Y, D := nil  % write Z	
+function p: read X, R % Y := nil  % write Z, S

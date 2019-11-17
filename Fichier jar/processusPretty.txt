@@ -1,0 +1,5 @@
+Création de projet xtext:
+Ecriture de la grammaire:
+	Exécution de la grammaire pour générer le dossier generator
+Modification du fichier WhGenerator.xtend:
+Création d'une classe Java pour le formatage:
