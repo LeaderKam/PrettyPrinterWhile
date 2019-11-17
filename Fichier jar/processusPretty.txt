@@ -3,3 +3,10 @@
 	Exécution de la grammaire pour générer le dossier generator
 # Modification du fichier WhGenerator.xtend:
 # Création d'une classe Java pour le formatage:
+#Pour executer le pretty printer :
+	Windows:
+		java -jar ppWh.jar <fichier source mal formaté> <option> <fichier dest>
+	Linux:
+		./ppWh <fichier source mal formaté> <option> <fichier dest>
+		
+	# A noté qu'il ya une petite erreur au debut mais ça fonctionne
