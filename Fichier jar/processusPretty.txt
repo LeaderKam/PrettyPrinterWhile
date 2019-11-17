@@ -8,5 +8,6 @@
 		java -jar ppWh.jar <fichier source mal formaté> <option> <fichier dest>
 	Linux:
 		./ppWh <fichier source mal formaté> <option> <fichier dest>
+		le fichier ppWh contient l'allias linux
 		
 	# A noté qu'il ya une petite erreur au debut mais ça fonctionne
