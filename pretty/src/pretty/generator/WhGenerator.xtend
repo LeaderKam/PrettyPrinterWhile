@@ -55,15 +55,10 @@ class WhGenerator extends AbstractGenerator {
 
 	// Ne sert que dans eclipse, pas dans les commande line
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-//		fsa.generateFile('greetings.txt', 'People to greet: ' + 
-//			resource.allContents
-//				.filter(Greeting)
-//				.map[name]
-//				.join(', '))
-init(indentations)
+		init(indentations)
 		doGenerate(resource, fsa, context, "", indentations)
 	}
-	
+
 	def doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context, String output,
 		List<Integer> indentations) {
 		this.indentations = indentations

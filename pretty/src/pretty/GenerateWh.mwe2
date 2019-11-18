@@ -32,7 +32,13 @@ Workflow {
 		language = StandardLanguage {
 			name = "pretty.Wh"
 			fileExtensions = "wh"
-
+			
+			//generation de main java
+			generator = {
+				generateJavaMain = true
+				
+			}
+			
 			serializer = {
 				generateStub = false
 			}
