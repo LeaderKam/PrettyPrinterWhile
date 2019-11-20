@@ -79,7 +79,7 @@ class WhGenerator extends AbstractGenerator {
 	'''
 
 	def compile(Function f) '''
-		function «f.name» :
+		function «f.name»:
 		read «FOR vr : f.definition.read.variable SEPARATOR ','»«vr»«ENDFOR»
 		%
 		«f.definition.commands.compile(indentAll)»

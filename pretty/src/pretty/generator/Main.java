@@ -7,34 +7,21 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.generator.GeneratorContext;
-import org.eclipse.xtext.generator.GeneratorDelegate;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.validation.CheckMode;
@@ -145,30 +132,37 @@ public class Main {
 		analyseCommande(options, args);
 	}
 
-	@SuppressWarnings("static-access")
+	
 	public static Options helpOption() {
 
 		Options options = new Options();
-		@SuppressWarnings("static-access")
-		Option outputOption = OptionBuilder.withArgName("FILE").hasArg()
-				.withDescription("Cree un fichier en sortie avec le nom donne en argument.").withLongOpt("output")
-				.create('o');
-		Option allOption = OptionBuilder.withArgName("INT").hasArg().withType(Integer.class)
-				.withDescription("Nombre d'espace choisi pour l'indentation generale des blocs.")
-				.withLongOpt("allindent").create("all");
-		Option ifOption = OptionBuilder.withArgName("INT").hasArg().withType(Integer.class)
-				.withDescription("Nombre d'espace choisi pour l'indentation des blocs if.").withLongOpt("ifindent")
-				.create("if");
-		Option whileOption = OptionBuilder.withArgName("INT").hasArg().withType(Integer.class)
-				.withDescription("Nombre d'espace choisi pour l'indentation des blocs while.")
-				.withLongOpt("whileindent").create("while");
+		
+		Option outputOption = new Option("o","output",true,"Cree un fichier en sortie avec le nom donne en argument.");
+				outputOption.setArgName("FILE");
+
+		Option allOption = new Option("all","allIndent",true,"Nombre d'espace choisi pour l'indentation generale des blocs.");
+				allOption.setArgName("INT");
+				allOption.setType(Integer.class);
+				
+		Option ifOption = new Option("if","ifIndent",true,"Nombre d'espace choisi pour l'indentation des blocs if.");
+				ifOption.setType(Integer.class);
+				ifOption.setArgName("INT");
+				
+		Option whileOption = new Option("while","whileIndent",true,"Nombre d'espace choisi pour l'indentation des blocs while.");
+				whileOption.setType(Integer.class);
+				whileOption.setArgName("INT");
+				
+				
 		Option helpOption = new Option("help", "Donne une liste d'option que l'utilisateur peut utiliser en argument.");
-		Option forOption = OptionBuilder.withArgName("INT").hasArg().withType(Integer.class)
-				.withDescription("Nombre d'espace choisi pour l'indentation des blocs for.").withLongOpt("forindent")
-				.create("for");
-		Option foreachOption = OptionBuilder.withArgName("INT").hasArg().withType(Integer.class)
-				.withDescription("Nombre d'espace choisi pour l'indentation des blocs foreach.")
-				.withLongOpt("forindent").create("foreach");
+		Option forOption = new Option("for","forIndent",true,"Nombre d'espace choisi pour l'indentation des blocs for.");
+				forOption.setType(Integer.class);
+				forOption.setArgName("INT");
+				
+		Option foreachOption = new Option("foreach","foreachIndent",true,"Nombre d'espace choisi pour l'indentation des blocs foreach.");
+				foreachOption.setType(Integer.class);
+				foreachOption.setArgName("INT");
+				
+				
 		/* On les ajoute à notre groupe d'options. */
 		options.addOption(outputOption);
 		options.addOption(allOption);
@@ -196,6 +190,10 @@ public class Main {
 			CommandLineParser parser = new GnuParser();
 			CommandLine cmd = parser.parse(options, args);
 			/* Etape 3: Récupération et traitement des résultat. */
+			if (!(new File(args[0]).exists())) {
+				helpShow(FICHIER_NON_TROUVE, options);
+				System.exit(1);
+			}
 			if (cmd.hasOption("help")) {
 				System.out.println("NAME\n\tppWh - pretty print un programme WHILE\n");
 				System.out.println("SYNOPSIS\n\tppWh fichier [options]\n");
@@ -232,10 +230,7 @@ public class Main {
 			if (cmd.hasOption("o")) {
 				outputFile = cmd.getOptionValue("o", "");
 			}
-			if (!(new File(args[0]).exists())) {
-				helpShow(FICHIER_NON_TROUVE, options);
-				System.exit(1);
-			}
+			
 			main.runGenerator(args[0], outputFile, params);
 
 		} catch (ParseException e) {
@@ -259,6 +254,7 @@ public class Main {
 
 	@Inject
 	private WhGenerator generator;
+	
 	@Inject
 	private JavaIoFileSystemAccess fileAccess;
 

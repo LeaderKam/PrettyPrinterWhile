@@ -1,0 +1,5 @@
+#!/bin/bash
+#bash script
+#alias prettywh="$(pwd)/prettywh" nous permet d'executer notre jar avec pwd/prettywh
+#sans ecrire toutes les commandes jar
+java -jar prettywh.jar "$@"
