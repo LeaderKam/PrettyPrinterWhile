@@ -80,11 +80,12 @@ class WhGenerator extends AbstractGenerator {
 
 	def compile(Function f) '''
 		function «f.name»:
-		read «FOR vr : f.definition.read.variable SEPARATOR ','»«vr»«ENDFOR»
+		read«FOR vr : f.definition.read.variable SEPARATOR ','» «vr»«ENDFOR»
 		%
 		«f.definition.commands.compile(indentAll)»
 		%
-		write «FOR vw : f.definition.write.variable SEPARATOR ','»«vw»«ENDFOR»
+		write«FOR vw : f.definition.write.variable SEPARATOR ','» «vw»«ENDFOR»
+		«"\n"» 
 	'''
 
 	def compile(Commands c, String indent) '''
@@ -122,7 +123,7 @@ class WhGenerator extends AbstractGenerator {
 		«indent»fi
 	'''
 	def compile(Affectation a) '''
-		«FOR nom : a.affectations SEPARATOR ','»«nom»«ENDFOR» := «FOR expr : a.valeurs SEPARATOR ','»«expr.compile»«ENDFOR»
+		«FOR nom : a.affectations SEPARATOR ','» «nom»«ENDFOR» :=«FOR expr : a.valeurs SEPARATOR ','» «expr.compile»«ENDFOR»
 	'''
 	def compile(For f, String indent) '''
 		for «f.expr.compile» do

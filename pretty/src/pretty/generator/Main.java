@@ -10,6 +10,7 @@ import com.google.inject.Provider;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.MissingResourceException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -35,7 +36,7 @@ public class Main {
 	public static String FICHIER_MANQUANT = "Fichier manquant";
 	public static String ERREUR_COMMANDE = "Erreur en executant la commande";
 	public static String FILE_DEFAULT="test.wh";
-	static final String syntax = "ppWh ou java -jar <FILE>";
+	static final String syntax = "whpp ou java -jar <FILE>";
 	public static HelpFormatter formatter;
 
 	/*public static class Fenetres extends JFrame implements ActionListener {
@@ -81,38 +82,27 @@ public class Main {
 			// Ajout du bouton à notre content pane
 			pan.add(bouton);
 			pan.add(ouvrir);
-			pan.add(file);
-			pan.add(help);
-			pan.add(textZone);
-
-			this.setContentPane(pan);
-			this.setVisible(true);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			int result;
-
-			chooser = new JFileChooser();
-			chooser.setCurrentDirectory(new java.io.File("."));
-			chooser.setDialogTitle(choosertitle);
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			//
-			// disable the "All files" option.
-			//
-			chooser.setAcceptAllFileFilterUsed(false);
-			//
-			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-				System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-				System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
-				file.setText(chooser.getSelectedFile()+"");
-			} else {
-				System.out.println("No Selection ");
-			}
-
-		}
-
-	}*/
+			pan.add(file); pan.add(help);
+	 * pan.add(textZone);
+	 * 
+	 * this.setContentPane(pan); this.setVisible(true); }
+	 * 
+	 * @Override public void actionPerformed(ActionEvent e) { int result;
+	 * 
+	 * chooser = new JFileChooser(); chooser.setCurrentDirectory(new
+	 * java.io.File(".")); chooser.setDialogTitle(choosertitle);
+	 * chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); // // disable
+	 * the "All files" option. // chooser.setAcceptAllFileFilterUsed(false); // if
+	 * (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+	 * System.out.println("getCurrentDirectory(): " +
+	 * chooser.getCurrentDirectory()); System.out.println("getSelectedFile() : " +
+	 * chooser.getSelectedFile()); file.setText(chooser.getSelectedFile()+""); }
+	 * else { System.out.println("No Selection "); }
+	 * 
+	 * }
+	 * 
+	 * }
+	 */
 
 	public static void main(String[] args) {
 
@@ -123,7 +113,7 @@ public class Main {
 
 		/* Étape 1 : Définition des options. */
 		Options options = helpOption();
-		//Fenetres fenettre = new Fenetres();
+		// Fenetres fenettre = new Fenetres();
 		if (args.length == 0) {
 			helpShow(FICHIER_NON_TROUVE, options);
 		}
@@ -132,37 +122,39 @@ public class Main {
 		analyseCommande(options, args);
 	}
 
-	
 	public static Options helpOption() {
 
 		Options options = new Options();
-		
-		Option outputOption = new Option("o","output",true,"Cree un fichier en sortie avec le nom donne en argument.");
-				outputOption.setArgName("FILE");
 
-		Option allOption = new Option("all","allIndent",true,"Nombre d'espace choisi pour l'indentation generale des blocs.");
-				allOption.setArgName("INT");
-				allOption.setType(Integer.class);
-				
-		Option ifOption = new Option("if","ifIndent",true,"Nombre d'espace choisi pour l'indentation des blocs if.");
-				ifOption.setType(Integer.class);
-				ifOption.setArgName("INT");
-				
-		Option whileOption = new Option("while","whileIndent",true,"Nombre d'espace choisi pour l'indentation des blocs while.");
-				whileOption.setType(Integer.class);
-				whileOption.setArgName("INT");
-				
-				
+		Option outputOption = new Option("o", "output", true,
+				"Cree un fichier en sortie avec le nom donne en argument.");
+		outputOption.setArgName("FILE");
+
+		Option allOption = new Option("all", "allIndent", true,
+				"Nombre d'espace choisi pour l'indentation generale des blocs.");
+		allOption.setArgName("INT");
+		allOption.setType(Integer.class);
+
+		Option ifOption = new Option("if", "ifIndent", true, "Nombre d'espace choisi pour l'indentation des blocs if.");
+		ifOption.setType(Integer.class);
+		ifOption.setArgName("INT");
+
+		Option whileOption = new Option("while", "whileIndent", true,
+				"Nombre d'espace choisi pour l'indentation des blocs while.");
+		whileOption.setType(Integer.class);
+		whileOption.setArgName("INT");
+
 		Option helpOption = new Option("help", "Donne une liste d'option que l'utilisateur peut utiliser en argument.");
-		Option forOption = new Option("for","forIndent",true,"Nombre d'espace choisi pour l'indentation des blocs for.");
-				forOption.setType(Integer.class);
-				forOption.setArgName("INT");
-				
-		Option foreachOption = new Option("foreach","foreachIndent",true,"Nombre d'espace choisi pour l'indentation des blocs foreach.");
-				foreachOption.setType(Integer.class);
-				foreachOption.setArgName("INT");
-				
-				
+		Option forOption = new Option("for", "forIndent", true,
+				"Nombre d'espace choisi pour l'indentation des blocs for.");
+		forOption.setType(Integer.class);
+		forOption.setArgName("INT");
+
+		Option foreachOption = new Option("foreach", "foreachIndent", true,
+				"Nombre d'espace choisi pour l'indentation des blocs foreach.");
+		foreachOption.setType(Integer.class);
+		foreachOption.setArgName("INT");
+
 		/* On les ajoute à notre groupe d'options. */
 		options.addOption(outputOption);
 		options.addOption(allOption);
@@ -195,8 +187,8 @@ public class Main {
 				System.exit(1);
 			}
 			if (cmd.hasOption("help")) {
-				System.out.println("NAME\n\tppWh - pretty print un programme WHILE\n");
-				System.out.println("SYNOPSIS\n\tppWh fichier [options]\n");
+				System.out.println("NAME\n\twhpp - pretty print un programme WHILE\n");
+				System.out.println("SYNOPSIS\n\twhpp fichier [options]\n");
 				System.out.println(
 						"DESCRIPTION\n\tTransforme un fichier source ecris dans le langage WHILE en sortie bien formatte(pretty print).\n"
 								+ "\tLa sortie est soit la sortie standard soit un fichier en utilisant l'option -o.\n"
@@ -230,12 +222,12 @@ public class Main {
 			if (cmd.hasOption("o")) {
 				outputFile = cmd.getOptionValue("o", "");
 			}
-			
+
 			main.runGenerator(args[0], outputFile, params);
 
 		} catch (ParseException e) {
-			helpShow(ERREUR_COMMANDE + e.getMessage(), options);
-			formatter.printHelp(syntax, options, true);
+			helpShow(e.getMessage(), options);
+			//formatter.printHelp(syntax, options, true);
 			System.exit(1);
 		} catch (Exception e) {
 			// e.printStackTrace();
@@ -254,33 +246,44 @@ public class Main {
 
 	@Inject
 	private WhGenerator generator;
-	
+
 	@Inject
 	private JavaIoFileSystemAccess fileAccess;
 
 	protected void runGenerator(String input, String output, List<Integer> indentations) {
+		long startTime = System.currentTimeMillis();//debut de la mesure
 		// Load the resource
+		
 		System.out.println("Lecture " + input + "...");
+		System.out.println("\n");
+	
 		ResourceSet set = resourceSetProvider.get();
 		Resource resource = set.getResource(URI.createFileURI(input), true);
 
 		// Validate the resource
-		List<Issue> list = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
-		if (!list.isEmpty()) {
-			for (Issue issue : list) {
-				System.err.println(issue);
+		/*List<Issue> list = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+			if (!list.isEmpty()) {
+				for (Issue issue : list) {
+					System.err.println(issue);
+				}
+				return;
 			}
-			return;
-		}
+		} catch (MissingResourceException e) {
+			System.out.println(e.getMessage());
+		}*/
 
 		// Configure and start the generator
-		// fileAccess.setOutputPath("src-gen/");
-		fileAccess.setOutputPath("./");
+		fileAccess.setOutputPath("src-gen/");
+		// fileAccess.setOutputPath("./");
 		GeneratorContext context = new GeneratorContext();
 		context.setCancelIndicator(CancelIndicator.NullImpl);
 		// generator.generate(resource, fileAccess, context);
 		generator.doGenerate(resource, fileAccess, context, output, indentations);
 
 		System.out.println("Code generation finished.");
+		long endTime = System.currentTimeMillis();// fin de la mesure
+	    System.out.println("Total execution time is :"+ (endTime-startTime));
+	    System.out.println("\n");
+	    
 	}
 }
