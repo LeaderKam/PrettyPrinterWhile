@@ -47,18 +47,21 @@ public class Main {
 
 		/* Étape 1 : Définition des options. */
 		Options options = new Options();
-		Option outputOption = new Option("o","output",true,"Creates an output file with the name given has an argument.");
-				outputOption.setArgName("FILE");
+//		Option outputOption = new Option("o","output",true,"Creates an output file with the name given has an argument.");
+//				outputOption.setArgName("FILE");
 		Option helpOption = new Option("help",
 				"Gives a detailed list of the options the user can use for the whc command.");
-		Option threeAddr = new Option("a","3adresse",false,"Display the \"3 @adresses\" code of the file in the console");
-		Option threeAddressFile= new Option("aa","3CodeInter", true, "Create file of 3 adresse");
+		Option threeAddr = new Option("3a","3adresse",false,"Display the \"3 @adresses\" code of the file in the console");
+		Option threeAddressFile= new Option("3aCode","3aCodeInter", true, "Create file of 3 adresse");
 				threeAddressFile.setArgName("FILE");
+		Option JavaFile= new Option("3aJava","JavaCodeFile", true, "Create java file ");
+				JavaFile.setArgName("FILE");
 		/* On les ajoute à notre groupe d'options. */
-		options.addOption(outputOption);
+//		options.addOption(outputOption);
 		options.addOption(helpOption);
 		options.addOption(threeAddr);
 		options.addOption(threeAddressFile);
+		options.addOption(JavaFile);
 		if (args.length == 0) {
 			System.err.println("Missing file");
 			formatter.printHelp(syntax, options, true);
@@ -73,23 +76,29 @@ public class Main {
 				System.out.println("NAME\n\twhc - Compile a WHILE program\n");
 				System.out.println("SYNOPSIS\n\twhc file [options]\n");
 				System.out.println(
-						"DESCRIPTION\n\tCompile a source file written in WHILE language into a executable JSavaScript code.\n"
-								+ "\tThe output is redirected to the standard output or to a file by using the -o option.\n");
+						"DESCRIPTION\n\tCompile a source file written in WHILE language into a executable Java code.\n"
+								+ "\tThe 3adresse code is redirected to the standard output  -3a option.\n"
+								+ "\tThe 3adresse code is redirected to a file by using the -3aCode option.\n"
+								+ "\tThe Java File is redirected to a file by using the -3aJava option.\n"
+						);
 				// options
 				formatter.printHelp(syntax, options, true);
 				System.out.println(
-						"\nAUTHORS\n\tWritten by Théo MARIE, Nicolas BOURDIN, Corentin DUCHATELET, Marlon KUQI et Corentin LEFRANC");
+						"\nAUTHORS\n\tWritten by Sie Vincent KAM, Achraff JAFFAR, Lou Anna VI, Marius KATOU");
 				System.exit(1);
 			}
-			if (cmd.hasOption("o")) {
-				outputFile = cmd.getOptionValue("o", "");
-			}
-			if (cmd.hasOption("aa")) {
-				outputFile = cmd.getOptionValue("aa", "");
+//			if (cmd.hasOption("o")) {
+//				outputFile = cmd.getOptionValue("o", "");
+//			}
+			if (cmd.hasOption("3a")) {
 				code = true;
 			}
-			if (cmd.hasOption("a")) {
+			if (cmd.hasOption("3aCode")) {
+				outputFile = cmd.getOptionValue("3aCode", "");
 				code = true;
+			}
+			if (cmd.hasOption("3aJava")) {
+				outputFile = cmd.getOptionValue("3aJava", "");
 			}
 			if (!(new File(args[0]).exists())) {
 				System.err.println("Unreachable file");
@@ -127,13 +136,13 @@ public class Main {
 		Resource resource = set.getResource(URI.createFileURI(input), true);
 
 		// Validate the resource
-		List<Issue> list = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
-		if (!list.isEmpty()) {
-			for (Issue issue : list) {
-				System.err.println(issue);
-			}
-			return;
-		}
+//		List<Issue> list = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+//		if (!list.isEmpty()) {
+//			for (Issue issue : list) {
+//				System.err.println(issue);
+//			}
+//			return;
+//		}
 
 		// Configure and start the generator
 		fileAccess.setOutputPath("./");

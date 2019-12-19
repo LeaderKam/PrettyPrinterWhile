@@ -2,6 +2,9 @@ package prettyCompilation.generator;
 
 import java.util.Stack;
 
+/*
+ * Class register
+ */
 public class RegisterStack {
 	Stack<String> registres = new Stack<String>();
 	private int counter = 0;
@@ -19,7 +22,7 @@ public class RegisterStack {
 		return registres.pop();
 	}
 	public String getNextReg() {
-		return prefixe+"["+counter+"]";
+		return prefixe+".get("+counter+")";
 	}
 	public String getPrefixe() {
 		return prefixe;

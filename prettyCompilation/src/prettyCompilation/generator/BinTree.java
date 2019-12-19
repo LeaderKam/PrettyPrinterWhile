@@ -33,27 +33,47 @@ public class BinTree {
 		}
 	}
 
+	/**
+	 * @return data
+	 */
 	public String getData() {
 		return data;
+		
 	}
 
+	/**
+	 * @param data
+	 */
 	public void setData(String data) {
 		this.data = data;
+		
 	}
 
+	/**
+	 * @return left BinTree
+	 */
 	public BinTree getLeft() {
 		return left;
+		
 	}
 
+	/**
+	 * @param leftTree
+	 */
 	public void setLeft(BinTree leftTree) {
 
 		if (leftTree.getData() != "nil") {
 			this.left = leftTree;
 		}
+		
 	}
 
+	/**
+	 * @return right BinTree
+	 */
 	public BinTree getRight() {
 		return right;
+		
 	}
 
 	public void setRight(BinTree rightTree) {
@@ -209,14 +229,5 @@ public class BinTree {
 		return false;
 	}
 
-//	module.exports = {
-//	    BinTree: BinTree,
-//	    head: head,
-//	    tail: tail,
-//	    cons: cons,
-//	    list: list,
-//	    evaluate: evaluate,
-//	    evaluateEQ: evaluateEQ,
-//	    isTrue: isTrue
-//	};
+
 }

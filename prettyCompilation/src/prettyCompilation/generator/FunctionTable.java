@@ -5,19 +5,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class FunctionTable {
+public class FunctionTable extends SymbolTable {
 //	/** Instance unique pré-initialisée */
 //	private static FunctionTable INSTANCE = new FunctionTable();
 
 	/**
 	 * Repertoire de fonctions representee par une liste de structures
-	 * FunctionDescriptor
+	 * CodeDependant
 	 */
-	private Map<String, FunctionDescriptor> functionDirectory;	
+	private Map<String, CodeDependant> functionDirectory;	
 
-	/** Constructeur privé */
+	/** Constructeur privé sans paramètre 
+	 * Repertoire de fonction 
+	 * Params: String :Nomfonction; Codedependant: Description des instruction interne(liste de structure)
+	 * */
 	public FunctionTable() {
-		this.functionDirectory = new HashMap<String, FunctionDescriptor>();
+		this.functionDirectory = new HashMap<String, CodeDependant>();
 	}
 
 //	/** Point d'accès pour l'instance unique du singleton */
@@ -25,29 +28,45 @@ public class FunctionTable {
 //		return INSTANCE;
 //	}
 
-	public void addFunction(String functionName, int out) {
-		FunctionDescriptor fd = new FunctionDescriptor(out);
+	/**
+	 * @param functionName
+	 * @param out
+	 */
+	@Override
+	public void addFunction(String functionName,int nbInput, int nbOutput) {
+		CodeDependant fd = new CodeDependant(nbInput, nbOutput);
 		this.functionDirectory.put(functionName, fd);
 	}
 
-	public void addThreeAddrInstruction(String functionName, ThreeAddrCode instr) {
-		FunctionDescriptor currentFd = this.functionDirectory.get(functionName);
+	/**
+	 * @param functionName
+	 * @param instr
+	 */
+	@Override
+	public void addThreeAddrInstruction(String functionName, Code3Adresse instr) {
+		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
 			currentFd.addInstruction(instr);
 		}
 		// TODO gestion des erreurs ?
 	}
 
+	/**
+	 * @param functionName
+	 * @param whileName
+	 */
+	@Override
 	public void addVariable(String functionName, String whileName) {
-		FunctionDescriptor currentFd = this.functionDirectory.get(functionName);
+		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
 			currentFd.addVariable(whileName, "whileVar['"+whileName+"']");
 		}
 		// TODO gestion des erreurs ?
 	}
 
+	@Override
 	public void addInput(String functionName, String whileName) {
-		FunctionDescriptor currentFd = this.functionDirectory.get(functionName);
+		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
 			currentFd.addInput(whileName);
 			currentFd.addVariable(whileName, "param"+whileName+"");
@@ -55,21 +74,29 @@ public class FunctionTable {
 		// TODO gestion des erreurs ?
 	}
 
-	private Map<String, FunctionDescriptor> getFunctionDirectory() {
+	private Map<String, CodeDependant> getFunctionDirectory() {
 		return this.functionDirectory;
 	}
 
-	public List<String> getInput(String functionName) {
-		FunctionDescriptor currentFd = this.functionDirectory.get(functionName);
+	/**
+	 * @return liste of inputs
+	 * @param function name
+	 */
+	public List<String> getInputs(String functionName) {
+		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
-			return currentFd.getInput();
+			return currentFd.getInputs();
 		}
 		return null;
 		// TODO gestion des erreurs ?
 	}
 
+	/**
+	 * @param functionName
+	 * @return number of output
+	 */
 	public int getOutput(String functionName) {
-		FunctionDescriptor currentFd = this.functionDirectory.get(functionName);
+		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
 			return currentFd.getOutput();
 		}
@@ -77,8 +104,8 @@ public class FunctionTable {
 		// TODO gestion des erreurs ?
 	}
 
-	public List<ThreeAddrCode> getInstructions(String functionName) {
-		FunctionDescriptor currentFd = this.functionDirectory.get(functionName);
+	public List<Code3Adresse> getInstructions(String functionName) {
+		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
 			return currentFd.getInstructions();
 		}
@@ -91,7 +118,7 @@ public class FunctionTable {
 	}
 
 	public String getVariable(String functionName, String variable) {
-		FunctionDescriptor currentFd = this.functionDirectory.get(functionName);
+		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
 			return currentFd.getVariables().get(variable);
 		}
@@ -99,7 +126,7 @@ public class FunctionTable {
 		// TODO gestion des erreurs ?
 	}
 	public boolean varExists(String functionName, String variable) {
-		FunctionDescriptor currentFd = this.functionDirectory.get(functionName);
+		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
 			return currentFd.getVariables().containsKey(variable);
 		}
@@ -107,7 +134,7 @@ public class FunctionTable {
 	}
 
 	public void popFromInstructionList(String functionName) {
-		FunctionDescriptor currentFd = this.functionDirectory.get(functionName);
+		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
 			currentFd.getInstructionList().pop();
 		}
