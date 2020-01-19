@@ -193,6 +193,9 @@ public class Libwh {
 		return position;
 	};
 
+	public void nonImpl(){
+		
+	}
 	/**
 	 * Parsing : Finding the position of the next ')' parenthesis of a string, from
 	 * a '(' parenthesis.
