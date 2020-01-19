@@ -43,9 +43,10 @@ public abstract class SymbolTable {
 	 * @param functionName
 	 * @param whileName
 	 */
-	public void addInput(String functionName, String whileName) {
+	public void addInputs(String functionName, String whileName) {
 		
 	}
+
 
 
 }

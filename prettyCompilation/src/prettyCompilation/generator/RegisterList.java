@@ -1,7 +1,9 @@
 package prettyCompilation.generator;
 
 import java.util.LinkedList;
-
+/*
+ * Une liste FIFO qui permet de générer des variables selon un préfixe donnée
+ */
 public class RegisterList {
 	LinkedList<String> registres = new LinkedList<String>();
 	private int counter = 0;
@@ -11,8 +13,9 @@ public class RegisterList {
 	}
 	
 	public String push() {
-		registres.add(prefixe+"["+counter+"]");
-		return prefixe+"["+(counter++)+"]";
+		registres.add(prefixe+".get("+counter+")");
+		counter++;
+		return prefixe;//affectation affectation partie gauche
 	}
 	
 	public String pop() {

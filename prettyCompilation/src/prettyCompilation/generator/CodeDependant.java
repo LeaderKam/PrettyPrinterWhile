@@ -18,8 +18,8 @@ import java.util.Stack;
  */
 public class CodeDependant {
 	private List<String> inputs;
-	private int output;
-	private int input;
+	private int nbOutput;
+	private int nbInput;
 	private List<Code3Adresse> instructions;
 	private Map<String, String> variables;
 	private Stack<List<Code3Adresse>> instructionList; 
@@ -35,8 +35,8 @@ public class CodeDependant {
 	 */
 	public CodeDependant(int nbInput, int nbOut) {
 		this.inputs = new ArrayList<String>();
-		this.output = nbOut;
-		this.input=nbInput;
+		this.nbOutput = nbOut;
+		this.nbInput=nbInput;
 		// Les instruction peuvent peut-être etre triée ? (déclaration d'abord...)
 		this.instructions = new LinkedList<Code3Adresse>();
 		this.variables = new HashMap<String, String>();
@@ -64,7 +64,7 @@ public class CodeDependant {
 		this.variables.put(whileName, javaName);
 	}
 
-	public void addInput(String whileName) {
+	public void addInputs(String whileName) {
 		this.inputs.add(whileName);
 	}
 
@@ -72,12 +72,12 @@ public class CodeDependant {
 		return inputs;
 	}
 
-	public int getOutput() {
-		return output;
+	public int getNbOutput() {
+		return nbOutput;
 	}
 
-	public int getInput() {
-		return input;
+	public int getNbInput() {
+		return nbInput;
 	}
 	public List<Code3Adresse> getInstructions() {
 		return instructions;

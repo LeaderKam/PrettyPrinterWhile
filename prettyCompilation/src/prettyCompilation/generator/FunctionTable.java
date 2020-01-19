@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import prettyCompilation.generator.FunctionTable;
 
 public class FunctionTable extends SymbolTable {
 //	/** Instance unique pré-initialisée */
@@ -14,7 +15,7 @@ public class FunctionTable extends SymbolTable {
 	 * CodeDependant
 	 */
 	private Map<String, CodeDependant> functionDirectory;	
-
+	public static int compt=0;
 	/** Constructeur privé sans paramètre 
 	 * Repertoire de fonction 
 	 * Params: String :Nomfonction; Codedependant: Description des instruction interne(liste de structure)
@@ -65,11 +66,12 @@ public class FunctionTable extends SymbolTable {
 	}
 
 	@Override
-	public void addInput(String functionName, String whileName) {
+	public void addInputs(String functionName, String whileName) {
 		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
-			currentFd.addInput(whileName);
-			currentFd.addVariable(whileName, "param"+whileName+"");
+			currentFd.addInputs(whileName);
+			currentFd.addVariable(whileName, whileName+compt);
+			compt++;
 		}
 		// TODO gestion des erreurs ?
 	}
@@ -98,7 +100,7 @@ public class FunctionTable extends SymbolTable {
 	public int getOutput(String functionName) {
 		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
-			return currentFd.getOutput();
+			return currentFd.getNbOutput();
 		}
 		return -1;
 		// TODO gestion des erreurs ?
@@ -141,5 +143,9 @@ public class FunctionTable extends SymbolTable {
 	}
 	public boolean functionExists(String functionName) {
 		return functionDirectory.containsKey(functionName);
+	}
+
+	public static FunctionTable getInstance() {
+	  throw new UnsupportedOperationException("TODO: auto-generated method stub");
 	}
 }

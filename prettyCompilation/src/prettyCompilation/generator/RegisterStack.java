@@ -1,9 +1,8 @@
 package prettyCompilation.generator;
 
 import java.util.Stack;
-
 /*
- * Class register
+ * Une liste FIFO qui permet de générer des variables selon un préfixe donnée
  */
 public class RegisterStack {
 	Stack<String> registres = new Stack<String>();
@@ -14,15 +13,15 @@ public class RegisterStack {
 	}
 	
 	public String push() {
-		registres.add(prefixe+"["+counter+"]");
-		return prefixe+"["+(counter++)+"]";
+		registres.add(prefixe);//affectation expression
+		return prefixe; //affectation expression de gauche
 	}
 	
 	public String pop() {
 		return registres.pop();
 	}
 	public String getNextReg() {
-		return prefixe+".get("+counter+")";
+		return prefixe+"["+counter+"]";
 	}
 	public String getPrefixe() {
 		return prefixe;
