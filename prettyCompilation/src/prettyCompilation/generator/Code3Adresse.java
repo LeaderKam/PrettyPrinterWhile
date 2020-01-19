@@ -5,18 +5,19 @@ import java.util.List;
 
 public class Code3Adresse {
 	String op;
-	String adr1;
-	String adr2;
-	String adr3;
+	String addr1;
+	String addr2;
+	String addr3;
 
 	List<Code3Adresse> alors, sinon;
 
-	public Code3Adresse(String op, String adr1, String adr2, String adr3) {
+	//Code 3@
+	public Code3Adresse(String op, String addr1, String addr2, String addr3) {
 		super();
 		this.op = op;
-		this.adr1 = adr1;
-		this.adr2 = adr2;
-		this.adr3 = adr3;
+		this.addr1 = addr1;
+		this.addr2 = addr2;
+		this.addr3 = addr3;
 
 		this.alors = null;
 		this.sinon = null;
@@ -36,82 +37,85 @@ public class Code3Adresse {
 		}
 	}
 
-	/**
-	 *@return toString Code3Adresse
-	 */
+	// permet de retourner "<op, addr1, addr2, addr3>";
 	@Override
 	public String toString() {
-		
+
 		return "<" + op + " " + ((alors != null) ? alors.toString() : "")
-				+ ((sinon != null) ? " ELSE " + sinon.toString() : "") + ", " + adr1 + ", " + adr2 + ", " + adr3
+				+ ((sinon != null) ? " ELSE " + sinon.toString() : "") + ", " + addr1 + ", " + addr2 + ", " + addr3
 				+ ">";
 	}
 
+	//pour la generation en Java
 	public String compile() {
 		String res = "";
 		switch (this.op) {
 		case "nop":
 			return "libwh.nop();";
 		case "ret":
-			return "return " + adr1 + ";";
+			return "return " + addr1 + ";";
+		case "rem":
+			return addr1 + ".clear();";
 		case "push":
-			return adr1+".add("+adr2+");";
+			return addr1 + ".add(" + addr2 + ");";
 		case "array":
-			return "List<BinTree> "+adr1+"=new ArrayList<BinTree>() ;";
+			return "List<BinTree> " + addr1 + " = new ArrayList<BinTree>();";
 		case "subarray":
-			return "BinTree[]"+adr1+";";
+			return "//addr1" + " = [];";
 		case "aff":
-			return adr1 + " = " + adr2 + ";";
+			return addr1 + "=" + addr2 + ";";
+		case "affv":
+			return addr1 + "=" + addr2 + ";";
 		case "nil":
-			return adr1 + " = libwh.nil();";
+			return addr1 + " = libwh.nil();";
 		case "cons":
-			return adr1 + " = libwh.cons(" + adr2 + ", " + adr3 + ");"; // return concaténation de adr2(gauche) et
-																			// adr3(droite)
-		// Attention à bien différentier si adr3 est un bintree ou pas. Si oui, merger,
-		// sinon, retourner adr2 sans concaténation (ca veut dire que c'est l'init)!
+			return addr1 + " = libwh.cons(" + addr2 + ", " + addr3 + ");"; // return concaténation de addr2(gauche) et
+																			// addr3(droite)
+		// Attention à bien différentier si addr3 est un bintree ou pas. Si oui, merger,
+		// sinon, retourner addr2 sans concaténation (ca veut dire que c'est l'init)!
 		case "hd":
-			return adr1 + " = libwh.hd(" + adr2 + ");";
+			return addr1 + " = libwh.hd(" + addr2 + ");";
 		case "tl":
-			return adr1 + " = libwh.tl(" + adr2 + ");";
+			return addr1 + " = libwh.tl(" + addr2 + ");";
 		case "not":
-			return adr1 + " = libwh.not(" + adr2 + ");";
+			return addr1 + " = libwh.not(" + addr2 + ");";
 		case "and":
-			return adr1 + " = libwh.and(" + adr2 + "," + adr3 + ");";
+			return addr1 + " = libwh.and(" + addr2 + "," + addr3 + ");";
 		case "or":
-			return adr1 + " = libwh.or(" + adr2 + "," + adr3 + ");";
+			return addr1 + " = libwh.or(" + addr2 + "," + addr3 + ");";
 		case "=?":
-			return adr1 + " = libwh.eq(" + adr2 + "," + adr3 + ");";
+			return addr1 + " = libwh.eq(" + addr2 + "," + addr3 + ");";
 		case "symb":
-			return adr1 + " = libwh.symb(\'" + adr2 + "\');";
+			return addr1 + " = libwh.symb(\'" + addr2 + "\');";
 		case "btoi":
-			return adr1 + " = libwh.intFromBintree(" + adr2 + ");";
+			return addr1 + " = libwh.intFromBintree(" + addr2 + ");";
 		case "call":
-			return adr3 + " = " + adr1 + ".apply(null, " + adr2 + ");";
+			return addr1 + ".addAll(" + addr2 + "(" + addr3 + "));";
 		case "pop":
-			return adr1 + " = " + adr2 + ".shift();";
+			return "//addr1 "+ " = " + addr2 + ".shift();";
 		case "while":
-			for (Code3Adresse code3Adresse : alors)
-				res += code3Adresse.compile() + "\n";
-			return "while(libwh.isTrue(" + adr2 + ")){\n" + res + "}";
+			for (Code3Adresse Code3Adresse : alors)
+				res += Code3Adresse.compile() + "\n";
+			return "while(libwh.isTrue(" + addr2 + ")){\n" + res + "}";
 		case "foreach":
-			res += adr3 + " = libwh.hd(" + adr1 + ")\n";
-			for (Code3Adresse code3Adresse : alors)
-				res += code3Adresse.compile() + "\n";
-			res += adr1 + " = libwh.tl(" + adr1 + ")\n";
-			return adr1 + " = " + adr2 + ";\nwhile(libwh.isTrue(" + adr1 + ")){\n" + res + "}";
+			res += addr3 + " = libwh.hd(" + addr1 + ")\n";
+			for (Code3Adresse Code3Adresse : alors)
+				res += Code3Adresse.compile() + "\n";
+			res += addr1 + " = libwh.tl(" + addr1 + ")\n";
+			return addr1 + " = " + addr2 + ";\nwhile(libwh.isTrue(" + addr1 + ")){\n" + res + "}";
 		case "for":
-			for (Code3Adresse code3Adresse : alors)
-				res += code3Adresse.compile() + "\n";
-			return adr1 + " = libwh.intFromBintree(" + adr2 + ");\nfor (" + adr3 + " = 0; " + adr3 + " < " + adr1
-					+ "; " + adr3 + "++){\n" + res + "}";
+			for (Code3Adresse Code3Adresse : alors)
+				res += Code3Adresse.compile() + "\n";
+			return addr1 + " = libwh.intFromBintree(" + addr2 + ");\nfor (" + addr3 + " = 0; " + addr3 + " < " + addr1
+					+ "; " + addr3 + "++){\n" + res + "}";
 		case "if":
-			for (Code3Adresse code3Adresse : alors)
-				res += code3Adresse.compile() + "\n";
-			res = "if (libwh.isTrue(" + adr2 + ")){\n" + res + "}";
+			for (Code3Adresse Code3Adresse : alors)
+				res += Code3Adresse.compile() + "\n";
+			res = "if (libwh.isTrue(" + addr2 + ")){\n" + res + "}";
 			if (!sinon.isEmpty()) {
 				res += "\nelse{\n";
-				for (Code3Adresse code3Adresse : sinon)
-					res += code3Adresse.compile() + "\n";
+				for (Code3Adresse Code3Adresse : sinon)
+					res += Code3Adresse.compile() + "\n";
 				res += "}";
 			}
 			return res;
