@@ -23,4 +23,4 @@
     ## 4. Execution du fichier  compilation est le package ou se trouve notre classe
       D:\TL\test\comp>java compilation.Test f0 6 8     
 # Auteur
-  # Sie Vincent KAM (Responsable Test) #Achraff JAFFAR (Scrum Master) #Marius Katou #Anna Vi
+  # Sie Vincent KAM (Responsable Test) Achraff JAFFAR (Scrum Master) Marius Katou #Anna Vi
