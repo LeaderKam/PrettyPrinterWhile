@@ -243,8 +243,14 @@ def compile(Nop w) {
 				errorList.add("[ERROR]Too many values at the left side of the affectation")
 				return
 			}
-			functionTable.addThreeAddrInstruction(currentName,
+			if(functionTable.varWhileExiste(currentName,v)){
+				functionTable.addThreeAddrInstruction(currentName,
 				new Code3Adresse("affVariable", functionTable.getVariable(currentName, v), registresAff.pop(), null))
+			}else{
+				functionTable.addThreeAddrInstruction(currentName,
+				new Code3Adresse("affWhile", functionTable.getVariable(currentName, v), registresAff.pop(), null))
+			}
+			
 		}
 		if (!registresAff.isEmpty()) {
 			errorList.add("[ERROR]Too many values at the right side of the affectation")
@@ -282,7 +288,7 @@ def compile(Nop w) {
 				new Code3Adresse("nil", functionTable.getVariable(currentName, v), null, null))
 			}
 			functionTable.addThreeAddrInstruction(currentName,
-				new Code3Adresse("push", "out", functionTable.getVariable(currentName, v), null))
+				new Code3Adresse("push", "out", functionTable.getVariable(currentName, v).replace("BinTree ",""), null))
 		}
 	}
 
@@ -308,12 +314,14 @@ def compile(Nop w) {
 					«IF function.equals("f0")»
 							
 					«indent»	public static List<BinTree> «function»(«FOR read : functionTable.getInputs(function) SEPARATOR ', '»BinTree «functionTable.getVariable(function, read) »«ENDFOR»){
+								BinTree «FOR read : functionTable.getVariableWhile(function).entrySet »«IF !functionTable.getInputs(function).contains(read.key)»«functionTable.getVariable(function, read.key)»;«ENDIF»«ENDFOR»
 					
 					«ELSE»
 					«indent»	public static List<BinTree> «function»(List<BinTree> params){
-								BinTree «FOR read : functionTable.getInputs(function) SEPARATOR ', '»«functionTable.getVariable(function, read) »«ENDFOR»;
+								BinTree «FOR read : functionTable.getVariableWhile(function).entrySet SEPARATOR ', '»«functionTable.getVariable(function, read.key) »«ENDFOR»;
 									
-								«FOR i:0 ..<functionTable.getInputs(function).size SEPARATOR '; '»«functionTable.getVariable(function, functionTable.getInputs(function).get(i))»=params.get(«i»)«ENDFOR»;
+								«FOR i:0 ..<functionTable.getInputs(function).size SEPARATOR '; '»«functionTable.getVariable(function, functionTable.getInputs(function).get(i))»=params.get(«i»)«ENDFOR»;		
+					
 					«ENDIF»				
 								«FOR instruction:functionTable.getInstructions(function)»
 									«instruction.compile()»

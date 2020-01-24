@@ -18,6 +18,7 @@ import java.util.Stack;
  */
 public class CodeDependant {
 	private List<String> inputs;
+	private List<String> inputsWhile;
 	private int nbOutput;
 	private int nbInput;
 	private List<Code3Adresse> instructions;

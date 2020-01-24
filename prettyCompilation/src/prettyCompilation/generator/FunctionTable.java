@@ -60,7 +60,7 @@ public class FunctionTable extends SymbolTable {
 	public void addVariable(String functionName, String whileName) {
 		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
-			currentFd.addVariable(whileName, "whileVar['"+whileName+"']");
+			currentFd.addVariable(whileName,whileName);
 		}
 		// TODO gestion des erreurs ?
 	}
@@ -91,6 +91,13 @@ public class FunctionTable extends SymbolTable {
 		}
 		return null;
 		// TODO gestion des erreurs ?
+	}
+	
+	public boolean varWhileExiste(String function,String varWhile) {
+		if(this.functionDirectory.get(function).getInputs().contains(varWhile))
+			return true;
+		return false;
+		
 	}
 
 	/**
@@ -123,6 +130,15 @@ public class FunctionTable extends SymbolTable {
 		CodeDependant currentFd = this.functionDirectory.get(functionName);
 		if (currentFd != null) {
 			return currentFd.getVariables().get(variable);
+		}
+		return null;
+		// TODO gestion des erreurs ?
+	}
+	
+	public Map<String, String> getVariableWhile(String functionName) {
+		CodeDependant currentFd = this.functionDirectory.get(functionName);
+		if (currentFd != null) {
+			return currentFd.getVariables();
 		}
 		return null;
 		// TODO gestion des erreurs ?

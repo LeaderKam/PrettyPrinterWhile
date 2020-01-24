@@ -60,6 +60,8 @@ public class Code3Adresse {
 			return "BinTree "+ addr1+" = "+addr2+";";
 		case "affVariable":
 			return addr1+" = "+addr2+";";
+		case "affWhile":
+			return addr1+" = "+addr2+";";
 		case "nil":
 			return "BinTree "+addr1+" = libwh.nil();";
 		case "cons":
