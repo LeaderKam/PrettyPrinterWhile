@@ -24,6 +24,6 @@
       D:\TL\test\comp>java compilation.Test f0 6 8     
 # Auteurs
   ### Sie Vincent KAM (Responsable Test) 
-  ### Achraff JAFFAR (Scrum Master) 
+  ### Achraff JAFFAR (Scrum Master)
+  ### Lou Anna Marcel VI
   ### Marius Katou 
-  ### Anna Vi
