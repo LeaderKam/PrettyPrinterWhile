@@ -13,8 +13,8 @@ public class RegisterStack {
 	}
 	
 	public String push() {
-		registres.add(prefixe);//affectation expression
-		return prefixe; //affectation expression de gauche
+		registres.add(prefixe+counter);//parti droite de expr et args
+		return prefixe+(counter++);//parti gauche de expr et args
 	}
 	
 	public String pop() {

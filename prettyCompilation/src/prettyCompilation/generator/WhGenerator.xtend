@@ -38,6 +38,7 @@ class WhGenerator extends AbstractGenerator {
 	FunctionTable functionTable;
 	boolean code = false;
 	RegisterList registresAff = new RegisterList("aff");
+	
 	RegisterStack registresExpr = new RegisterStack("expr");
 	RegisterStack registresI = new RegisterStack("i");
 	RegisterStack registresLoop = new RegisterStack("loop");
@@ -135,33 +136,31 @@ class WhGenerator extends AbstractGenerator {
 	'''
 
 	def compile(Program p) {
-		for (function : p.functions) {
-			currentName = function.name;
+		for (f : p.functions) {
+			currentName = f.name;
 			// Création dans la table des fonctions
-			functionTable.addFunction(function.name, function.definition.read.variable.size,
-				function.definition.write.variable.size)
-			function.definition.read.compile
-
+			functionTable.addFunction(f.name,f.definition.read.variable.size, f.definition.write.variable.size)
+			f.definition.read.compile
 		}
-		for (function : p.functions) {
-			currentName = function.name;
-			function.compile
+		for (f : p.functions) {
+			currentName = f.name;
+			f.compile
 		}
-
 	}
 
-	def compile(Function f) {
+
+def compile(Function f) {
 		// prélude
-		functionTable.addThreeAddrInstruction(currentName,
-			new Code3Adresse("array", registresAff.getPrefixe(), null, null))
-		functionTable.addThreeAddrInstruction(currentName,
-			new Code3Adresse("array", registresExpr.getPrefixe(), null, null))
-		functionTable.addThreeAddrInstruction(currentName,
-			new Code3Adresse("array", registresI.getPrefixe(), null, null))
-		functionTable.addThreeAddrInstruction(currentName,
-			new Code3Adresse("array", registresLoop.getPrefixe(), null, null))
-		functionTable.addThreeAddrInstruction(currentName,
-			new Code3Adresse("array", registresArgs.getPrefixe(), null, null))
+//		functionTable.addThreeAddrInstruction(currentName,
+//			new Code3Adresse("array", registresAff.getPrefixe(), null, null))
+//		functionTable.addThreeAddrInstruction(currentName,
+//			new Code3Adresse("array", registresExpr.getPrefixe(), null, null))
+//		functionTable.addThreeAddrInstruction(currentName,
+//			new Code3Adresse("array", registresI.getPrefixe(), null, null))
+//		functionTable.addThreeAddrInstruction(currentName,
+//			new Code3Adresse("array", registresLoop.getPrefixe(), null, null))
+//		functionTable.addThreeAddrInstruction(currentName,
+//			new Code3Adresse("array", registresArgs.getPrefixe(), null, null))
 //		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("array", "whileVar", null, null))
 		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("array", "out", null, null))
 
@@ -175,15 +174,10 @@ class WhGenerator extends AbstractGenerator {
 	def compile(Read r) {
 		for (v : r.variable) {
 			functionTable.addInputs(currentName, v.toString())
-//			if (!functionTable.varExists(currentName, v)) {
-//				functionTable.addThreeAddrInstruction(currentName,
-//					new Code3Adresse("nil", functionTable.getVariable(currentName, v), null, null))
-//			}
-//			functionTable.addThreeAddrInstruction(currentName,
-//				new Code3Adresse("pop", functionTable.getVariable(currentName, v), null, null))
 		}
 	}
 
+	
 	def compile(Commands c) {
 		for (command : c.commands) {
 			command.compile
@@ -206,7 +200,7 @@ class WhGenerator extends AbstractGenerator {
 			(c.command as Foreach).compile
 	}
 
-	def compile(Nop w) {
+def compile(Nop w) {
 		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("nop", null, null, null))
 	}
 
@@ -220,9 +214,9 @@ class WhGenerator extends AbstractGenerator {
 
 	def compile(If i) {
 		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("if", null, i.expr.compile, null))
-		i.commands1.compile
+			i.commands1.compile
 		functionTable.popFromInstructionList(currentName)
-		if (i.commands2 !== null) {
+		if (i.commands2 !== null){
 			i.commands2.compile
 		}
 		functionTable.popFromInstructionList(currentName)
@@ -250,12 +244,12 @@ class WhGenerator extends AbstractGenerator {
 				return
 			}
 			functionTable.addThreeAddrInstruction(currentName,
-				new Code3Adresse("aff", functionTable.getVariable(currentName, v), registresAff.pop(), null))
+				new Code3Adresse("affVariable", functionTable.getVariable(currentName, v), registresAff.pop(), null))
 		}
 		if (!registresAff.isEmpty()) {
 			errorList.add("[ERROR]Too many values at the right side of the affectation")
-			while (!registresAff.isEmpty())
-				registresAff.pop
+			while(!registresAff.isEmpty())
+			registresAff.pop
 			return
 		}
 	}
@@ -275,8 +269,7 @@ class WhGenerator extends AbstractGenerator {
 			functionTable.addVariable(currentName, f.variable)
 		}
 		functionTable.addThreeAddrInstruction(currentName,
-			new Code3Adresse("foreach", registresExpr.push, f.expr.compile,
-				functionTable.getVariable(currentName, f.variable)))
+			new Code3Adresse("foreach", registresExpr.push, f.expr.compile, functionTable.getVariable(currentName, f.variable)))
 		f.commands.compile
 		functionTable.popFromInstructionList(currentName)
 		registresExpr.pop
@@ -284,9 +277,9 @@ class WhGenerator extends AbstractGenerator {
 
 	def compile(Write w) {
 		for (v : w.variable) {
-			if (!functionTable.varExists(currentName, v)) {
+			if(!functionTable.varExists(currentName, v)){
 				functionTable.addThreeAddrInstruction(currentName,
-					new Code3Adresse("nil", functionTable.getVariable(currentName, v), null, null))
+				new Code3Adresse("nil", functionTable.getVariable(currentName, v), null, null))
 			}
 			functionTable.addThreeAddrInstruction(currentName,
 				new Code3Adresse("push", "out", functionTable.getVariable(currentName, v), null))
@@ -298,18 +291,17 @@ class WhGenerator extends AbstractGenerator {
 		
 		import java.util.ArrayList;
 		import java.util.List;
+		import java.util.LinkedList;
 		
 		import compilation.Libwh;
 		import compilation.BinTree;
 		import java.util.function.Function;
-		import javax.script.*;
-		import java.util.HashMap;
-		import java.util.Map;
+		
+		
 		
 		
 		public class «output.replace(".java","").toFirstUpper» {
 			public static Libwh libwh = new Libwh();
-			public static Map<String,Integer> paramsFunctions= new HashMap<String,Integer>();
 			
 			
 		«indent»«FOR function : functionTable.getFunctions()»
@@ -415,21 +407,16 @@ class WhGenerator extends AbstractGenerator {
 			if ((e.eContainer instanceof Affectation) || functionTable.getOutput(e.ope) == 1) {
 				var name = registresExpr.push;
 				var args = registresArgs.push
-				functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("subarray", args, null, null)) // sous liste
+				functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("subarray", args, null, null))
 				for (expr : e.lexpr.exprs) {
 					functionTable.addThreeAddrInstruction(currentName,
 						new Code3Adresse("push", args, expr.compile, null))
 				}
 				functionTable.addThreeAddrInstruction(currentName,
-					new Code3Adresse("call", registresExpr.pop, e.ope, registresArgs.pop))
-				// Supression de la liste d'arguments
-				functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("rem", args, null, null))
-
+					new Code3Adresse("call", e.ope, registresArgs.pop, registresExpr.pop))
 				// le premier
 				functionTable.addThreeAddrInstruction(currentName,
-					new Code3Adresse("pop", registresExpr.push, null, null))
-
-//				new Code3Adresse("pop", registresExpr.push, name, null))
+					new Code3Adresse("pop", registresExpr.push, name, null))
 				// cas affectation (sauf le premier)
 				if (functionTable.getOutput(e.ope) > 1) {
 					var i = 0
@@ -442,7 +429,7 @@ class WhGenerator extends AbstractGenerator {
 							new Code3Adresse("aff", registresAff.push, registresExpr.pop, null))
 					}
 				}
-
+				
 				return registresExpr.pop;
 
 			} else {

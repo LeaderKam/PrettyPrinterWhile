@@ -13,9 +13,8 @@ public class RegisterList {
 	}
 	
 	public String push() {
-		registres.add(prefixe+".get("+counter+")");
-		counter++;
-		return prefixe;//affectation affectation partie gauche
+		registres.add(prefixe+""+counter+"");//expression de droite pour aff
+		return prefixe+(counter++);//expression de gauche
 	}
 	
 	public String pop() {
