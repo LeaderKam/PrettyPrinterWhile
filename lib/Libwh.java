@@ -8,6 +8,7 @@ import java.util.List;
 import compilation.BinTree;
 import java.util.function.Function;
 import javax.script.*;
+import java.util.LinkedList;
 
 /**
  * @author sievi
@@ -18,6 +19,8 @@ public class Libwh {
 	/**
 	 * 
 	 */
+	public static BinTree bintree ;
+
 	public Libwh() {
 		// super();
 		// TODO Auto-generated constructor stub
@@ -30,38 +33,38 @@ public class Libwh {
 		return new BinTree("nil", null, null);
 	}
 
-	public BinTree cons(BinTree addr2, BinTree addr3) {
-		BinTree bt = new BinTree("cons", addr2, addr3);
-		List<BinTree> args = new ArrayList<BinTree>();
-		args.add(addr2); // clone the addr2
-		if (addr3 != null) {
-			args.add(addr3); // clone the addr3
+	public BinTree cons(BinTree adr2, BinTree adr3) {
+		
+		bintree = new BinTree("cons", adr2, adr3);
+		LinkedList<BinTree> args = new LinkedList<BinTree>();
+		args.add(adr2); // clone the adr2
+		if (adr3 != null) {
+			args.add(adr3); // clone the adr3
 		}
-		return bt.cons(args); // return the new bintree
+		return bintree.cons(args); // return the new bintree
 	}
 
-	public BinTree list(BinTree addr2, BinTree addr3) {
-		BinTree bt = new BinTree("nill", addr2, addr3);
+	public BinTree list(BinTree adr2, BinTree adr3) {
+		bintree = new BinTree("nill", adr2, adr3);
 		List<BinTree> args = new ArrayList<BinTree>();
-		args.add(addr2); // clone the addr2
-		args.add(addr3); // clone the addr3
-		return bt.list(args); // return the new bintree
+		args.add(adr2); // clone the adr2
+		args.add(adr3); // clone the adr3
+		return bintree.list(args); // return the new bintree
 	}
 
-	public BinTree hd(BinTree addr2) {
-		BinTree bt = new BinTree("nill", null, null);
-		return bt.head(addr2);
+	public BinTree hd(BinTree adr) {
+		return adr.head(adr);
 	}
 
-	public BinTree tl(BinTree addr2) {
-		BinTree bt = new BinTree("nill", null, null);
-		return bt.tail(addr2);
+	public BinTree tl(BinTree adr) {
+		
+		return adr.tail(adr);
 	}
 
-	public BinTree not(BinTree addr2) {
-		BinTree bt = new BinTree("nill", null, null);
-		if (bt.isTrue(addr2)) {
-			return bt;
+	public BinTree not(BinTree adr2) {
+		//BinTree bintree = new BinTree("nill", null, null);
+		if (adr2.isTrue(adr2)) {
+			return bintree;
 		} else {
 			return new BinTree("cons", new BinTree("nil", null, null), new BinTree("nil", null, null));
 		}
@@ -75,24 +78,24 @@ public class Libwh {
 
 	}
 
-	public BinTree and(BinTree addr2, BinTree addr3) {
-		BinTree bt = new BinTree("AND", null, null);
-		return bt.evaluate("AND", addr2, addr3);
+	public BinTree and(BinTree adr2, BinTree adr3) {
+		bintree = new BinTree("AND", null, null);
+		return bintree.evaluate("AND", adr2, adr3);
 	}
 
-	public BinTree or(BinTree addr2, BinTree addr3) {
-		BinTree bt = new BinTree("OR", null, null);
-		return bt.evaluate("OR", addr2, addr3);
+	public BinTree or(BinTree adr2, BinTree adr3) {
+		BinTree bintree = new BinTree("OR", null, null);
+		return bintree.evaluate("OR", adr2, adr3);
 	}
 
-	public BinTree eq(BinTree addr2, BinTree addr3) {
-		BinTree bt = new BinTree("EQ", null, null);
-		return bt.evaluate("EQ", addr2, addr3);
+	public BinTree eq(BinTree adr2, BinTree adr3) {
+		BinTree bintree = new BinTree("EQ", null, null);
+		return bintree.evaluate("EQ", adr2, adr3);
 	}
 
-	public BinTree symb(String addr2) { // here, a symbol is given so we need to return a bintree with the symbol as
+	public BinTree symb(String adr2) { // here, a symbol is given so we need to return a bintree with the symbol as
 										// data
-		return bintreeFromString(addr2);
+		return bintreeFromString(adr2);
 	}
 
 	/**
