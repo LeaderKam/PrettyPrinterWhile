@@ -9,9 +9,9 @@
     Dossier contenant le Libwh et le BinTree
   # Mode d'execution du jar
     ## 1. Génération de code 3@
-      java -jar whc.jar test40.wh -3aCode test.txt
+      java -jar whc.jar test40.wh -3aC test.txt
     ## 2. Génération de fichier Java (extension .java)
-      java -jar whc.jar test40.wh -3aJava test.java
+      java -jar whc.jar test40.wh -o test.java
       
   # Processus d'exécution des fichiers java
     ## 1. le BinTree  se placer dans le dossier ou se trouve tous nos fichier java (ex: D:\TL\test\comp)
