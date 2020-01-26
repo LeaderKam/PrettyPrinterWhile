@@ -3,29 +3,25 @@
  */
 package prettyCompilation.generator
 
+import java.util.LinkedList
+import java.util.List
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import java.util.List
-import java.util.LinkedList
-import prettyCompilation.wh.Program
-import prettyCompilation.wh.Function
-import prettyCompilation.wh.Read
-import prettyCompilation.wh.Commands
-import prettyCompilation.wh.Command
-import prettyCompilation.wh.Nop
-import prettyCompilation.wh.If
 import prettyCompilation.wh.Affectation
-import prettyCompilation.wh.While
+import prettyCompilation.wh.Command
+import prettyCompilation.wh.Commands
+import prettyCompilation.wh.Expr
 import prettyCompilation.wh.For
 import prettyCompilation.wh.Foreach
-import prettyCompilation.wh.Expr
+import prettyCompilation.wh.Function
+import prettyCompilation.wh.If
+import prettyCompilation.wh.Nop
+import prettyCompilation.wh.Program
+import prettyCompilation.wh.Read
+import prettyCompilation.wh.While
 import prettyCompilation.wh.Write
-import prettyCompilation.generator.FunctionTable
-import java.util.Map
-import java.util.HashMap
-import java.util.ArrayList
 
 /**
  * Generates code from your model files on save.
@@ -37,18 +33,18 @@ class WhGenerator extends AbstractGenerator {
 	String currentName;
 	FunctionTable functionTable;
 	boolean code = false;
-	RegisterList registresAff = new RegisterList("aff");
-	
-	RegisterStack registresExpr = new RegisterStack("expr");
-	RegisterStack registresI = new RegisterStack("i");
-	RegisterStack registresLoop = new RegisterStack("loop");
-	RegisterStack registresArgs = new RegisterStack("args");
+	RegistreAffectation registresAff = new RegistreAffectation("aff");
+
+	RegisterAutre registresExpr = new RegisterAutre("exprEval");
+	RegisterAutre registresI = new RegisterAutre("i");
+	RegisterAutre registresLoop = new RegisterAutre("nbIteration");
+	RegisterAutre registresArgs = new RegisterAutre("args");
 	public String outputClassname;
 	public String indent = "  ";
-	public Map<String, Integer> paramsFonctions = new HashMap<String, Integer>();
-	public Map<Integer, List<String>> b = new HashMap<Integer, List<String>>();
-	public List<String> a = new ArrayList<String>();
+	
 	public int count = 0;
+	private int nbAffectationGauche=0;
+	private int nbAffectationDroite=0;
 
 	/** Instance unique pré-initialisée */
 	public static FunctionTable INSTANCE = new FunctionTable();
@@ -66,56 +62,24 @@ class WhGenerator extends AbstractGenerator {
 		functionTable = INSTANCE;
 		for (program : resource.allContents.toIterable.filter(typeof(Program))) {
 			program.compile
-//			if (!errorList.isEmpty) {
-//				System.err.println("Compilation errors :");
-//				for (String issue : errorList) {
-//					System.err.println(issue);
-//				}
-//				return;
-//			}
+
 			if (code) {
 				if (output != "") {
 					fsa.generateFile(output.toFirstUpper, compile3addr)
 				} else {
 					for (f : functionTable.getFunctions()) {
-
 						for (instruction : functionTable.getInstructions(f)) {
-
 							println(instruction.toString())
-
 						}
-
 					}
 				}
 			} else {
-
 				fsa.generateFile(output.toFirstUpper, compileToJava(output));
-
 			}
-
-//			if (output.equals("")) {
-//				println(compileToJava)
-//			} else
-//				fsa.generateFile(output, compileToJava);
 			for (function : functionTable.getFunctions) {
 				var inputs = functionTable.getInputs(function).toString().substring(1)
-				inputs = inputs.substring(0, inputs.length - 1)
-				fsa.generateFile("temp/" + function + ".txt", inputs)
-				fsa.generateFile("temp1/test.text", paramsFonctions.toString);
 			}
-
 		}
-	}
-
-	def countP() {
-
-		a.add("<retour , out, null, null>");
-		a.add("<array , aff, null, null>");
-		a.add("<array , i, null, null>");
-		a.add("<array , loop, null, null>");
-		a.add("<array , args, null, null>");
-
-		return a;
 	}
 
 	def compile3addr() '''
@@ -126,138 +90,128 @@ class WhGenerator extends AbstractGenerator {
 			************************************
 			
 				«FOR instruction : functionTable.getInstructions(f)» 
-					«IF !countP().contains(instruction.toString())»
-						«instruction.toString()»
-					«ENDIF»
+					«instruction.toString()»
 				«ENDFOR»
 			
 			
 		«ENDFOR»	
 	'''
 
-	def compile(Program p) {
-		for (f : p.functions) {
-			currentName = f.name;
+	def compile(Program program) {
+		for (function : program.functions) {
+			currentName = function.name;
 			// Création dans la table des fonctions
-			functionTable.addFunction(f.name,f.definition.read.variable.size, f.definition.write.variable.size)
-			f.definition.read.compile
+			functionTable.addFunction(function.name, function.definition.read.variable.size,
+				function.definition.write.variable.size)
+			function.definition.read.compile
 		}
-		for (f : p.functions) {
-			currentName = f.name;
-			f.compile
+		for (function : program.functions) {
+			currentName = function.name;
+			function.compile
 		}
 	}
 
+	def compile(Function function) {
+		// pour initialisation de la liste de sortie out (prélude)
+		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("list", "out", null, null))
 
-def compile(Function f) {
-		// prélude
-//		functionTable.addThreeAddrInstruction(currentName,
-//			new Code3Adresse("array", registresAff.getPrefixe(), null, null))
-//		functionTable.addThreeAddrInstruction(currentName,
-//			new Code3Adresse("array", registresExpr.getPrefixe(), null, null))
-//		functionTable.addThreeAddrInstruction(currentName,
-//			new Code3Adresse("array", registresI.getPrefixe(), null, null))
-//		functionTable.addThreeAddrInstruction(currentName,
-//			new Code3Adresse("array", registresLoop.getPrefixe(), null, null))
-//		functionTable.addThreeAddrInstruction(currentName,
-//			new Code3Adresse("array", registresArgs.getPrefixe(), null, null))
-//		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("array", "whileVar", null, null))
-		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("array", "out", null, null))
-
-		f.definition.commands.compile
-		f.definition.write.compile
+		function.definition.commands.compile
+		function.definition.write.compile
 		// postlude
 		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("ret", "out", null, null))
 
 	}
 
-	def compile(Read r) {
-		for (v : r.variable) {
-			functionTable.addInputs(currentName, v.toString())
+	def compile(Read read) {
+		for (variable : read.variable) {
+			functionTable.addInputs(currentName, variable.toString())
 		}
 	}
 
-	
-	def compile(Commands c) {
-		for (command : c.commands) {
+	def compile(Commands commands) {
+		for (command : commands.commands) {
 			command.compile
 		}
 
 	}
 
-	def compile(Command c) {
-		if (c.command instanceof Nop)
-			(c.command as Nop).compile
-		else if (c.command instanceof If)
-			(c.command as If).compile
-		else if (c.command instanceof Affectation)
-			(c.command as Affectation).compile
-		else if (c.command instanceof While)
-			(c.command as While).compile
-		else if (c.command instanceof For)
-			(c.command as For).compile
-		else if (c.command instanceof Foreach)
-			(c.command as Foreach).compile
+	def compile(Command commandInstance) {
+		if (commandInstance.command instanceof Nop)
+			(commandInstance.command as Nop).compile
+		else if (commandInstance.command instanceof If)
+			(commandInstance.command as If).compile
+		else if (commandInstance.command instanceof Affectation)
+			(commandInstance.command as Affectation).compile
+		else if (commandInstance.command instanceof While)
+			(commandInstance.command as While).compile
+		else if (commandInstance.command instanceof For)
+			(commandInstance.command as For).compile
+		else if (commandInstance.command instanceof Foreach)
+			(commandInstance.command as Foreach).compile
 	}
 
-def compile(Nop w) {
+	def compile(Nop nop) {
 		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("nop", null, null, null))
 	}
 
-	def compile(While w) {
-		var name = w.expr.compile
+	def compile(While whileInstance) {
+		var name = whileInstance.expr.compile
 		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("while", null, name, null))
-		w.commands.compile
-		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("aff", name, w.expr.compile, null))
+		whileInstance.commands.compile
+		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("aff", name, whileInstance.expr.compile, null))
 		functionTable.popFromInstructionList(currentName)
 	}
 
-	def compile(If i) {
-		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("if", null, i.expr.compile, null))
-			i.commands1.compile
+	def compile(If ifInstance) {
+		functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("if", null, ifInstance.expr.compile, null))
+		ifInstance.commands1.compile
 		functionTable.popFromInstructionList(currentName)
-		if (i.commands2 !== null){
-			i.commands2.compile
+		if (ifInstance.commands2 !== null) {
+			ifInstance.commands2.compile
 		}
 		functionTable.popFromInstructionList(currentName)
 	}
 
-	def compile(Affectation a) {
+	def compile(Affectation affectation) {
 		// TODO : Controle du nombre d'affectation pour l'instant c'est 1 := 1
 		// Mais pb si on utilise des fonction qui retournent plusieurs param : X,Y := (f1 A) //si f1 retourne plusieurs params
 		// TODO : presence de la variable ou pas
-		for (v : a.affectations) {
-			if (!functionTable.varExists(currentName, v)) {
-				functionTable.addVariable(currentName, v);
+		for (valeurGauche : affectation.affectations) {
+			if (!functionTable.varExists(currentName, valeurGauche)) {
+				functionTable.addVariable(currentName, valeurGauche);
+				nbAffectationGauche++;
 			}
 		}
-		for (expr : a.valeurs) {
+		for (exprDroite : affectation.valeurs) {
 			// r =  cons nil ?
 			// TO DO : création de variable par push/pop direct
 			functionTable.addThreeAddrInstruction(currentName,
-				new Code3Adresse("aff", registresAff.push, expr.compile, null))
+				new Code3Adresse("aff", registresAff.push, exprDroite.compile, null))
 		}
-		for (v : a.affectations) {
+		for (v : affectation.affectations) {
 			// r = cons nil ?
 			if (registresAff.isEmpty()) {
 				errorList.add("[ERROR]Too many values at the left side of the affectation")
 				return
 			}
-			if(functionTable.varWhileExiste(currentName,v)){
+			if (functionTable.varWhileExiste(currentName, v)) {
 				functionTable.addThreeAddrInstruction(currentName,
-				new Code3Adresse("affVariable", functionTable.getVariable(currentName, v), registresAff.pop(), null))
-			}else{
+					new Code3Adresse("affVariable", functionTable.getVariable(currentName, v), registresAff.pop(),
+						null))
+			} else {
 				functionTable.addThreeAddrInstruction(currentName,
-				new Code3Adresse("affWhile", functionTable.getVariable(currentName, v), registresAff.pop(), null))
+					new Code3Adresse("affWhile", functionTable.getVariable(currentName, v), registresAff.pop(), null))
 			}
-			
+
 		}
 		if (!registresAff.isEmpty()) {
 			errorList.add("[ERROR]Too many values at the right side of the affectation")
-			while(!registresAff.isEmpty())
-			registresAff.pop
+			while (!registresAff.isEmpty())
+				registresAff.pop
 			return
 		}
+		
+		
 	}
 
 	def compile(For f) {
@@ -275,7 +229,8 @@ def compile(Nop w) {
 			functionTable.addVariable(currentName, f.variable)
 		}
 		functionTable.addThreeAddrInstruction(currentName,
-			new Code3Adresse("foreach", registresExpr.push, f.expr.compile, functionTable.getVariable(currentName, f.variable)))
+			new Code3Adresse("foreach", registresExpr.push, f.expr.compile,
+				functionTable.getVariable(currentName, f.variable)))
 		f.commands.compile
 		functionTable.popFromInstructionList(currentName)
 		registresExpr.pop
@@ -283,12 +238,13 @@ def compile(Nop w) {
 
 	def compile(Write w) {
 		for (v : w.variable) {
-			if(!functionTable.varExists(currentName, v)){
+			if (!functionTable.varExists(currentName, v)) {
 				functionTable.addThreeAddrInstruction(currentName,
-				new Code3Adresse("nil", functionTable.getVariable(currentName, v), null, null))
+					new Code3Adresse("nil", functionTable.getVariable(currentName, v), null, null))
 			}
 			functionTable.addThreeAddrInstruction(currentName,
-				new Code3Adresse("push", "out", functionTable.getVariable(currentName, v).replace("BinTree ",""), null))
+				new Code3Adresse("push", "out", functionTable.getVariable(currentName, v).replace("BinTree ", ""),
+					null))
 		}
 	}
 
@@ -304,47 +260,62 @@ def compile(Nop w) {
 		import java.util.function.Function;
 		
 		
-		
-		
 		public class «output.replace(".java","").toFirstUpper» {
 			public static Libwh libwh = new Libwh();
 			
+		«FOR function : functionTable.getFunctions()»
+			«IF function.equals("f0")»
+										
+«indent»	public static List<BinTree> «function»(«FOR read : functionTable.getInputs(function) SEPARATOR ', '»BinTree «functionTable.getVariable(function, read) »«ENDFOR»){
+				«FOR read : functionTable.getVariableWhile(function).entrySet »
+				    «IF !functionTable.getInputs(function).contains(read.key)»BinTree «functionTable.getVariable(function, read.key)»;
+					«ENDIF»
+				«ENDFOR»
+										
+			«ELSE»
+«indent»  public static List<BinTree> «function»(List<BinTree> params){
+					BinTree «FOR read : functionTable.getVariableWhile(function).entrySet SEPARATOR ', '»«functionTable.getVariable(function, read.key) »«ENDFOR»;
 			
-		«indent»«FOR function : functionTable.getFunctions()»
-					«IF function.equals("f0")»
-							
-					«indent»	public static List<BinTree> «function»(«FOR read : functionTable.getInputs(function) SEPARATOR ', '»BinTree «functionTable.getVariable(function, read) »«ENDFOR»){
-								BinTree «FOR read : functionTable.getVariableWhile(function).entrySet »«IF !functionTable.getInputs(function).contains(read.key)»«functionTable.getVariable(function, read.key)»;«ENDIF»«ENDFOR»
-					
-					«ELSE»
-					«indent»	public static List<BinTree> «function»(List<BinTree> params){
-								BinTree «FOR read : functionTable.getVariableWhile(function).entrySet SEPARATOR ', '»«functionTable.getVariable(function, read.key) »«ENDFOR»;
-									
-								«FOR i:0 ..<functionTable.getInputs(function).size SEPARATOR '; '»«functionTable.getVariable(function, functionTable.getInputs(function).get(i))»=params.get(«i»)«ENDFOR»;		
-					
-					«ENDIF»				
-								«FOR instruction:functionTable.getInstructions(function)»
-									«instruction.compile()»
-								«ENDFOR»
-								
-					«indent»	}
+					«FOR i:0 ..<functionTable.getInputs(function).size SEPARATOR '; '»«functionTable.getVariable(function, functionTable.getInputs(function).get(i))»=params.get(«i»)«ENDFOR»;		
+			
+			«ENDIF»				
+			«FOR instruction:functionTable.getInstructions(function)»
+			«indent.concat(indent)»	«instruction.compile()»
+			«ENDFOR»			
+			«indent»  }
 			«ENDFOR»
 			public static void main(String[] args){
-			
-				if((args.length!=«functionTable.getInputs("f0").size+1»)||(args.length<=0)){	
-					System.out.println("La fonction prend «functionTable.getInputs("f0").size» parametres\n mais vous avez donnez "+args.length);
+				List<String> argss=new ArrayList<String>();
+				List<BinTree> mainWhile;
+				int nb=«functionTable.getInputs("f0").size»;
+				
+				if((args.length-1<«functionTable.getInputs("f0").size»)){	
+					System.out.println("La fonction prend «functionTable.getInputs("f0").size» parametres\n mais vous avez donnez "+(args.length-1));
+					
+					for(int i=0;i<nb;i++){
+						if(i<args.length-1){
+							argss.add(args[i+1]);
+						}else{
+							argss.add("nil");
+						}
+					}
+					
+					mainWhile=f0(«FOR i:0 ..<functionTable.getInputs("f0").size SEPARATOR ', '»libwh.bintreeFromString(argss.get(«i»))«ENDFOR»);
 				}else{	
-					for(int i=0;i<args.length ;i++){
-						System.out.println("Params:  "+args[i]);
+					for(int i=0;i<nb;i++){
+						argss.add(args[i+1]);
 					}
 					«FOR function : functionTable.getFunctions()»
 						«IF function.equals("f0")»
-							List<BinTree> mainWhile=«function»(«FOR i:0 ..<functionTable.getInputs(function).size SEPARATOR ', '»libwh.bintreeFromString(args[«i+1»])«ENDFOR»);
+							mainWhile=«function»(«FOR i:0 ..<functionTable.getInputs(function).size SEPARATOR ', '»libwh.bintreeFromString(argss.get(«i»))«ENDFOR»);
 						«ENDIF»
 					«ENDFOR»
-					for(BinTree valeur:mainWhile){
-						System.out.println("Value of BinTree : "+libwh.intFromBintree(valeur));	
-					}		
+				}
+				for(int i=0;i<nb ;i++){
+					System.out.println("Params"+(i+1)+":  "+argss.get(i));
+				}
+				for(BinTree valeur:mainWhile){
+					System.out.println("Value of BinTree : "+libwh.bintreeToInt(valeur));	
 				}
 			}
 		}
@@ -353,82 +324,87 @@ def compile(Nop w) {
 // return le nom de la variable
 // génère du code 3@
 // Remplacer par un switch ?
-	def String compile(Expr e) {
-		if (e.valeur !== null) {
-			if (e.valeur.equals("nil")) {
-				// attention c'est du fifo
-				// peut etre à changer en stack si besoin pour les autres Expr...
-				functionTable.addThreeAddrInstruction(currentName,
-					new Code3Adresse("nil", registresExpr.push, null, null))
-				return registresExpr.pop;
-			} // VARIABLES
-			else {
-				// TODO  controler la présence de la variable dans la liste des variable,
-				// Si elle n'existe pas on fait quoi ?
-				// +différence VARIABLE vs SYMBOLE ??
-				return functionTable.getVariable(currentName, e.valeur);
+	def String compile(Expr expr) {
+
+		if (expr.valeur !== null) {
+			switch (expr.valeur) {
+				case "nil": {
+					functionTable.addThreeAddrInstruction(currentName,
+						new Code3Adresse("nil", registresExpr.push, null, null))
+					return registresExpr.pop;
+				}
+				// VARIABLE
+				default: {
+					// TODO  controler la présence de la variable dans la liste des variable,
+					// Si elle n'existe pas on fait quoi ?
+					// +différence VARIABLE vs SYMBOLE ??
+					return functionTable.getVariable(currentName, expr.valeur);
+				}
 			}
 		} // SYMBOLES
-		else if (e.symb !== null) {
-			if (!functionTable.varExists(currentName, e.symb)) {
-				functionTable.addVariable(currentName, e.symb);
+		else if (expr.symb !== null) {
+			if (!functionTable.varExists(currentName, expr.symb)) {
+				functionTable.addVariable(currentName, expr.symb);
 			}
 			functionTable.addThreeAddrInstruction(currentName,
-				new Code3Adresse("symb", functionTable.getVariable(currentName, e.symb), e.symb, null))
-			return functionTable.getVariable(currentName, e.symb);
-		} else if (e.ope.equals("cons")) {
+				new Code3Adresse("symb", functionTable.getVariable(currentName, expr.symb), expr.symb, null))
+			return functionTable.getVariable(currentName, expr.symb);
+		} else if (expr.ope.equals("cons")) {
 			var name = registresExpr.push;
 			functionTable.addThreeAddrInstruction(currentName,
-				new Code3Adresse("aff", name, e.lexpr.exprs.reverseView.remove(0).compile, null))
-			for (expr : e.lexpr.exprs.reverseView) {
-				functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("cons", name, expr.compile, name))
+				new Code3Adresse("aff", name, expr.lexpr.exprs.reverseView.remove(0).compile, null))
+			for (exprVar : expr.lexpr.exprs.reverseView) {
+				functionTable.addThreeAddrInstruction(currentName,
+					new Code3Adresse("cons", name, exprVar.compile, name))
 			}
 			return registresExpr.pop;
-		} else if (e.ope.equals("list")) {
+		} else if (expr.ope.equals("list")) {
 			var name = registresExpr.push;
 			functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("nil", name, null, null))
-			for (expr : e.lexpr.exprs.reverseView) {
-				functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("cons", name, expr.compile, name))
+			for (exprVar : expr.lexpr.exprs.reverseView) {
+				functionTable.addThreeAddrInstruction(currentName,
+					new Code3Adresse("cons", name, exprVar.compile, name))
 			}
 			return registresExpr.pop;
-		} else if (e.ope.equals("hd") || e.ope.equals("tl") || e.ope.equals("not")) {
-			var name = registresExpr.push;
-			functionTable.addThreeAddrInstruction(currentName, new Code3Adresse(e.ope, name, e.expr.compile, null))
-			return registresExpr.pop;
-		} else if (e.ope.equals("and") || e.ope.equals("or") || e.ope.equals("=?")) {
+		} else if (expr.ope.equals("hd") || expr.ope.equals("tl") || expr.ope.equals("not")) {
 			var name = registresExpr.push;
 			functionTable.addThreeAddrInstruction(currentName,
-				new Code3Adresse(e.ope, name, e.ex1.compile, e.ex2.compile))
+				new Code3Adresse(expr.ope, name, expr.expr.compile, null))
+			return registresExpr.pop;
+		} else if (expr.ope.equals("and") || expr.ope.equals("or") || expr.ope.equals("=?")) {
+			var name = registresExpr.push;
+			functionTable.addThreeAddrInstruction(currentName,
+				new Code3Adresse(expr.ope, name, expr.ex1.compile, expr.ex2.compile))
 			return registresExpr.pop;
 		} // TODO else --> call
 		else {
-			if (!functionTable.functionExists(e.ope)) {
-				errorList.add("[ERROR]the function named \"" + e.ope + "\" doesn't exist")
+			if (!functionTable.functionExists(expr.ope)) {
+				errorList.add("[ERROR]the function named \"" + expr.ope + "\" doesn't exist")
 				return "null"
 			}
-			if (functionTable.getInputs(e.ope).size != e.lexpr.exprs.size) {
+			if (functionTable.getInputs(expr.ope).size != expr.lexpr.exprs.size) {
 				errorList.add(
-					"[ERROR]the function named \"" + e.ope + "\" have " + functionTable.getInputs(e.ope).size +
-						" parameters and not " + e.lexpr.exprs.size)
+					"[ERROR]the function named \"" + expr.ope + "\" have " + functionTable.getInputs(expr.ope).size +
+						" parameters and not " + expr.lexpr.exprs.size)
 				return "null"
 			}
-			if ((e.eContainer instanceof Affectation) || functionTable.getOutput(e.ope) == 1) {
+			if ((expr.eContainer instanceof Affectation) || functionTable.getOutput(expr.ope) == 1) {
 				var name = registresExpr.push;
 				var args = registresArgs.push
-				functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("subarray", args, null, null))
-				for (expr : e.lexpr.exprs) {
+				functionTable.addThreeAddrInstruction(currentName, new Code3Adresse("list", args, null, null))
+				for (exprVar : expr.lexpr.exprs) {
 					functionTable.addThreeAddrInstruction(currentName,
-						new Code3Adresse("push", args, expr.compile, null))
+						new Code3Adresse("push", args, exprVar.compile, null))
 				}
 				functionTable.addThreeAddrInstruction(currentName,
-					new Code3Adresse("call", e.ope, registresArgs.pop, registresExpr.pop))
+					new Code3Adresse("call", expr.ope, registresArgs.pop, registresExpr.pop))
 				// le premier
 				functionTable.addThreeAddrInstruction(currentName,
 					new Code3Adresse("pop", registresExpr.push, name, null))
 				// cas affectation (sauf le premier)
-				if (functionTable.getOutput(e.ope) > 1) {
+				if (functionTable.getOutput(expr.ope) > 1) {
 					var i = 0
-					for (i = 0; i < functionTable.getOutput(e.ope) - 1; i++) {
+					for (i = 0; i < functionTable.getOutput(expr.ope) - 1; i++) {
 						// 3@ pop
 						functionTable.addThreeAddrInstruction(currentName,
 							new Code3Adresse("pop", registresExpr.push, name, null))
@@ -437,12 +413,12 @@ def compile(Nop w) {
 							new Code3Adresse("aff", registresAff.push, registresExpr.pop, null))
 					}
 				}
-				
+
 				return registresExpr.pop;
 
 			} else {
 
-				errorList.add("[ERROR]the function named \"" + e.ope + "\" has more than one returned value")
+				errorList.add("[ERROR]the function named \"" + expr.ope + "\" has more than one returned value")
 				return "null"
 			}
 		}

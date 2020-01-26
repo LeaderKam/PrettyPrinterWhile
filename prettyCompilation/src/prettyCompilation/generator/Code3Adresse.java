@@ -8,8 +8,6 @@ public class Code3Adresse {
 	String addr1;
 	String addr2;
 	String addr3;
-	private int count=0;
-
 	List<Code3Adresse> alors, sinon;
 
 	//Code 3@
@@ -52,10 +50,8 @@ public class Code3Adresse {
 			return "return "+addr1+";";
 		case "push":
 			return addr1+".add("+addr2+");";
-		case "array":
+		case "list":
 			return "List<BinTree> "+addr1+" = new ArrayList<BinTree>();";
-		case "subarray":
-			return "List<BinTree> "+ addr1+" = new ArrayList<BinTree>();";
 		case "aff":
 			return "BinTree "+ addr1+" = "+addr2+";";
 		case "affVariable":
@@ -80,11 +76,11 @@ public class Code3Adresse {
 		case "=?":
 			return "BinTree "+addr1+" = libwh.eq("+addr2+","+addr3+");";
 		case "symb":
-			return "BinTree "+addr1+" = libwh.symb(\'"+addr2+"\');";
+			return addr1+" = libwh.symb(\""+addr2+"\");";
 		case "btoi":
-			return "BinTree "+addr1+" = libwh.intFromBintree("+addr2+");";
+			return "int "+addr1+" = libwh.intFromBintree("+addr2+");";
 		case "call":
-			return "LinkedList<BinTree> "+ addr3+" = new LinkedList<BinTree>();\n"+
+			return "LinkedList<BinTree> "+ addr3+" = new LinkedList<BinTree>();\n\t\t"+
 					addr3+".addAll("+addr1+"("+addr2+"));";
 		case "pop" :
 			return "BinTree "+addr1+" = "+addr2+".pop();";
@@ -95,21 +91,21 @@ public class Code3Adresse {
 		case "foreach":
 			res+=addr3+" = libwh.hd("+addr1+")\n";
 			for(Code3Adresse Code3Adresse : alors)
-				res += Code3Adresse.compile()+"\n";
+				res += Code3Adresse.compile()+"\n\t\t\t";
 			res+=addr1+" = libwh.tl("+addr1+")\n";
 			return addr1+" = "+addr2+";\nwhile(libwh.isTrue("+addr1+")){\n"+res+"}";
 		case "for":
 			for(Code3Adresse Code3Adresse : alors)
-				res += Code3Adresse.compile()+"\n";
-			return "int "+addr1+" = libwh.intFromBintree("+addr2+");\nfor (int "+addr3+" = 0; "+addr3+" < "+addr1+"; "+addr3+"++){\n"+res+"}";
+				res += Code3Adresse.compile()+"\n\t\t\t";
+			return "int "+addr1+" = libwh.bintreeToInt("+addr2+");\n\t\tfor (int "+addr3+" = 0; "+addr3+" < "+addr1+"; "+addr3+"++){\n\t\t\t"+res+"\n\t\t}";
 		case "if":
 			for(Code3Adresse Code3Adresse : alors)
-				res += Code3Adresse.compile()+"\n";
-			res = "if (libwh.isTrue("+addr2+")){\n"+res+"}";
+				res += Code3Adresse.compile()+"\n\t\t\t";
+			res = "if (libwh.isTrue("+addr2+")){\n\t\t\t"+res+"}";
 			if(!sinon.isEmpty()) {
-				res+="\nelse{\n";
+				res+="\n\t\t\telse{\n";
 				for(Code3Adresse Code3Adresse : sinon)
-					res += Code3Adresse.compile()+"\n";
+					res += Code3Adresse.compile()+"\n\t\t\t";
 				res+="}";
 			}
 			return res;

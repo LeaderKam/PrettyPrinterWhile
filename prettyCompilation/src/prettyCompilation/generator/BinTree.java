@@ -1,10 +1,9 @@
 /**
  * 
  */
-package compilation;
+package prettyCompilation.generator;
 
 import java.util.List;
-import java.util.LinkedList;
 
 /**
  * @author sievi
@@ -123,13 +122,13 @@ public class BinTree {
 	 * @param {*} args : array<BinTree>
 	 * @returns BinTree object with the BinTrees in args.
 	 */
-	public BinTree cons(LinkedList<BinTree> args) {
+	public BinTree cons(List<BinTree> args) {
 		if (args != null) {
 			if (args.size() == 0) {
 				return new BinTree("nil", null, null);
 			}
 
-			BinTree tree = args.pop(); // retourne le premier element du tableau
+			BinTree tree = args.get(0); // retourne le premier element du tableau
 			if (args.size() <= 0) {
 				return tree;
 			} else {

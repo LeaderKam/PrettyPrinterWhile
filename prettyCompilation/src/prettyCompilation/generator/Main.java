@@ -51,10 +51,10 @@ public class Main {
 //				outputOption.setArgName("FILE");
 		Option helpOption = new Option("help",
 				"Gives a detailed list of the options the user can use for the whc command.");
-		Option threeAddr = new Option("3a","3adresse",false,"Display the \"3 @adresses\" code of the file in the console");
-		Option threeAddressFile= new Option("3aCode","3aCodeInter", true, "Create file of 3 adresse");
+		Option threeAddr = new Option("3aCode","3adresse",false,"Display the \"3 @adresses\" code of the file in the console");
+		Option threeAddressFile= new Option("3aC","3aCodeInter", true, "Create file of 3 adresse");
 				threeAddressFile.setArgName("FILE");
-		Option JavaFile= new Option("3aJava","JavaCodeFile", true, "Create java file ");
+		Option JavaFile= new Option("o","output", true, "Create java file ");
 				JavaFile.setArgName("FILE");
 		/* On les ajoute à notre groupe d'options. */
 //		options.addOption(outputOption);
@@ -93,12 +93,12 @@ public class Main {
 			if (cmd.hasOption("3a")) {
 				code = true;
 			}
-			if (cmd.hasOption("3aCode")) {
-				outputFile = cmd.getOptionValue("3aCode", "");
+			if (cmd.hasOption("3aC")) {
+				outputFile = cmd.getOptionValue("3aC", "");
 				code = true;
 			}
-			if (cmd.hasOption("3aJava")) {
-				outputFile = cmd.getOptionValue("3aJava", "");
+			if (cmd.hasOption("o")) {
+				outputFile = cmd.getOptionValue("o", "");
 			}
 			if (!(new File(args[0]).exists())) {
 				System.err.println("Unreachable file");
