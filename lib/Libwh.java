@@ -46,13 +46,27 @@ public class Libwh {
 		return bintree.cons(args); // return the new bintree
 	}
 
-	public BinTree list(BinTree adr2, BinTree adr3) {
-		bintree = new BinTree("nill", adr2, adr3);
-		LinkedList<BinTree> args = new LinkedList<BinTree>();
-		args.add(adr2); // clone the adr2
-		args.add(adr3); // clone the adr3
-		return bintree.list(args); // return the new bintree
-	}
+	public BinTree list(LinkedList<BinTree> args) {
+		BinTree res=bintreeFromInt(0);
+		if (args != null) {
+			if (args.size() == 0) {
+				res= new BinTree("nil", null, null);
+			}
+
+			BinTree tree = args.pop();
+			if (args.size() <= 0) {
+				res= new BinTree("cons", tree, new BinTree("nil", null, null));
+			} else {
+				res = new BinTree("cons", tree, list(args));
+			}
+		}
+		return res;
+	};
+
+	// public BinTree list(LinkedList<BinTree> args) {
+	// 	bintree = new BinTree("nill", null, null);
+	// 	return bintree.list(args); // return the new bintree
+	// }
 
 	public BinTree hd(BinTree adr) {
 		return adr.head(adr);
@@ -162,7 +176,7 @@ public class Libwh {
 				res= bintreeFromInt(j);
 			}
 		}else{
-			System.out.println("bintree mal formate donne nil(0)");
+			System.out.println("bintree mal formate donne nil (0)");
 			res= new BinTree(val.toString(), null, null);
 		}
 		
