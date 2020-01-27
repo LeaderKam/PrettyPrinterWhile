@@ -129,21 +129,21 @@ public class BinTree {
 	 * @return List of BinTrees from a given array of BinTrees. (nil) if it has
 	 *          less than 2 elements.
 	 */
-	public BinTree list(LinkedList<BinTree> args) {
-		if (args != null) {
-			if (args.size() == 0) {
-				return new BinTree("nil", null, null);
-			}
+	// public BinTree list(LinkedList<BinTree> args) {
+	// 	if (args != null) {
+	// 		if (args.size() == 0) {
+	// 			return new BinTree("nil", null, null);
+	// 		}
 
-			BinTree tree = args.pop();
-			if (args.size() <= 0) {
-				return new BinTree("list", tree, new BinTree("nil", null, null));
-			} else {
-				return new BinTree("list", tree, list(args));
-			}
-		}
-		return null;
-	};
+	// 		BinTree tree = args.pop();
+	// 		if (args.size() <= 0) {
+	// 			return new BinTree("list", tree, new BinTree("nil", null, null));
+	// 		} else {
+	// 			return new BinTree("list", tree, list(args));
+	// 		}
+	// 	}
+	// 	return null;
+	// };
 
 	/**
 	 * Apply the given operand to the trees.
