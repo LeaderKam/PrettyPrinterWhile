@@ -286,6 +286,7 @@ class WhGenerator extends AbstractGenerator {
 			«ENDFOR»
 			public static void main(String[] args){
 				List<String> argss=new ArrayList<String>();
+				LinkedList<BinTree> argsList=new LinkedList<BinTree>();
 				List<BinTree> mainWhile;
 				int nb=«functionTable.getInputs("f0").size»;
 				
@@ -301,7 +302,26 @@ class WhGenerator extends AbstractGenerator {
 					}
 					
 					mainWhile=f0(«FOR i:0 ..<functionTable.getInputs("f0").size SEPARATOR ', '»libwh.bintreeFromString(argss.get(«i»))«ENDFOR»);
-				}else{	
+				}
+				
+				
+				else if(args.length-1>nb){
+					for(int i=0;i<args.length-1;i++){
+						if(i<nb-1){
+							argss.add(args[i+1]);
+						}else{
+							argsList.add(libwh.bintreeFromString(args[i+1]));
+						}
+					}
+					BinTree bintree=libwh.list(argsList);
+					«FOR function : functionTable.getFunctions()»
+						«IF function.equals("f0")»
+							mainWhile=«function»(«FOR i:0 ..<functionTable.getInputs(function).size-1 SEPARATOR ', '»libwh.bintreeFromString(argss.get(«i»)) «ENDFOR»«IF functionTable.getInputs(function).size-1==0»bintree«ELSE»,bintree«ENDIF»);
+						«ENDIF»
+					«ENDFOR»
+					argss.add(libwh.bintreeToString(bintree));
+				}
+				else{	
 					for(int i=0;i<nb;i++){
 						argss.add(args[i+1]);
 					}
@@ -315,7 +335,7 @@ class WhGenerator extends AbstractGenerator {
 					System.out.println("Params"+(i+1)+":  "+argss.get(i));
 				}
 				for(BinTree valeur:mainWhile){
-					System.out.println("Value of BinTree : "+libwh.bintreeToInt(valeur));	
+					System.out.println("Result of BinTree : "+libwh.bintreeToInt(valeur));	
 				}
 			}
 		}
