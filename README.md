@@ -1,7 +1,17 @@
+# Fichier jar et sh
+  dossier contenant le prettyPrinter (whpp) et le compilateur (whc) et un script d'éxecution whpp.sh et whc.sh
+  
 # PrettyPrinterWhile
 
-# Fichier jar
-  dossier contenant le prettyPrinter
+  # Mode d'execution du jar
+    ### 1. indentation par defaut (test40.wh fichier while , test.txt sortie)   ##1.1 indentation par defaut
+      java -jar whpp.jar test40.wh -o test.txt                                    ./whpp.sh test40.wh -0 test.txt
+    ## 2. aide en ligne                                                        ##2.2 aide en ligne
+      java -jar whc.jar -help                                                      ./whpp.sh -help
+      
+  # Processus d'exécution des fichiers java
+    ## 1. plusiseur option d'indentation pouvant etre combiné (ex: -if 2 -while 5 -for 6 -o test.txt)
+      D:\TL>java -jar whpp.jar fichier.wh -while 5 -for 6 -o test.txt     
 
 # Compilateur
 
