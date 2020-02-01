@@ -5,7 +5,7 @@
 
   # Mode d'execution du jar
     ## 1. indentation par defaut                                       ##1.1 indentation par defaut
-      java -jar whpp.jar test40.wh -o test.txt                           ./whpp.sh test40.wh -0 test.txt
+      java -jar whpp.jar test40.wh -o test.txt                           ./whpp.sh test40.wh -o test.txt
       (ex: test40.wh fichier while , test.txt fichier de sortie)
     ## 2. aide en ligne                                                ##2.2 aide en ligne
       java -jar whc.jar -help                                            ./whpp.sh -help
